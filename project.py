@@ -99,7 +99,7 @@ def identify_image(image_path):
     return best_prediction[0][0][1]
 
 def update_picture():
-    global pic = app.select_file()
+    pic = app.select_file()
     display_image.image = generate_display_picture(pic, DISPLAY_IMAGE_SIZE)
     prediction = identify_image(pic)
     article = wiki.page(prediction)
