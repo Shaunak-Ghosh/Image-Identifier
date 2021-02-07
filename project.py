@@ -4,6 +4,7 @@ from guizero import App, Box, Text, TextBox, Picture, PushButton
 from PIL import Image
 import tensorflow as tf
 import numpy as np
+import wikipedia as wiki
 
 model = tf.keras.applications.VGG16()
 
@@ -89,13 +90,6 @@ button_box = Box(app, width='fill', align='bottom')
 
 ### End user interface code ###
 
-
-def update_picture():
-    pic = app.select_file()
-    display_image.image = generate_display_picture(pic, DISPLAY_IMAGE_SIZE)
-
-IMAGE_SIZE = 224
-
 def identify_image(image_path):
     image = tf.keras.preprocessing.image.load_img(image_path, target_size=(IMAGE_SIZE, IMAGE_SIZE))
     image = tf.keras.preprocessing.image.img_to_array(image)
@@ -103,6 +97,16 @@ def identify_image(image_path):
     prediction_result = model.predict(image, batch_size=1)
     best_prediction = tf.keras.applications.imagenet_utils.decode_predictions(prediction_result, top=1)
     return best_prediction[0][0][1]
+
+def update_picture():
+    global pic = app.select_file()
+    display_image.image = generate_display_picture(pic, DISPLAY_IMAGE_SIZE)
+    prediction = identify_image(pic)
+    article = wiki.page(prediction)
+    title.value = article.title
+    update_text_box(article.summary)
+
+IMAGE_SIZE = 224
 
 
 # This line creates a button with the text 'Select picture' and tells it to run the update_picture function when clicked
